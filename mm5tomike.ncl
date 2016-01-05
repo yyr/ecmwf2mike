@@ -31,8 +31,29 @@ begin
   a = addfile(input_filename,"r")
   ; o = addfile(output_filename,"w")
 
+  ; retrieve data
   longs = a->longitude
   lats = a->latitude
+
+  time = a->time
+  t = ut_calendar(time,0) ; time(time)
+
+  u             = a->u10
+  u_offset      = u@add_offset
+  u_scalefactor = u@scale_factor
+  uu = (u * u_scalefactor) + u_offset
+
+  v             = a->v10
+  v_offset      = v@add_offset
+  v_scalefactor = v@scale_factor
+  vv = (v * v_scalefactor) + v_offset
+
+
+  p             = a->sp
+  p_offset      = p@add_offset
+  p_scalefactor = p@scale_factor
+  pp = (p * p_scalefactor) + p_offset
+
 
   noflongs = dimsizes(longs)
   noflats = dimsizes(lats)
@@ -46,13 +67,12 @@ begin
   dx = (long_max - long_min) / (noflongs - 1)
   dy = (lat_max - lat_min) / (noflats - 1)
 
-  time = a->time
-  t = ut_calendar(time,0) ; time(time)
-
   ; print( lat_max + " "  + lat_min)
   ; print( long_max + " "  + long_min)
   ; print ("dx " + dx + " dy " + dy)
 
+
+  ; start writing out file
   dq = str_get_dq()
   sp = " "
 
@@ -79,23 +99,21 @@ begin
   print(qs("Delete") + " -1E-030")
   print(qs("DataType") + " 0")
 
-  u = a->u10
-  v = a->v10
-  p = a->sp
 
 ;  do it = 0, dimsizes(time) - 1, 1
   do it = 0, 1, 1
     do var = 1, 3, 1
       put_record_header(it, var)
       if ( var .eq. 1 ) then
-        print(u(it,:,:))
+        print(uu(it,:,:))
       end if
       if ( var .eq. 2 ) then
-        print(v(it,:,:))
+        print(vv(it,:,:))
       end if
       if ( var .eq. 3 ) then
-        print(p(it,:,:))
+        print(pp(it,:,:))
       end if
     end do
   end do
+
 end
