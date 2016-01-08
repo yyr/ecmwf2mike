@@ -11,25 +11,38 @@ begin
 end
 
 ;_____________________________________________________________________________
+; procedure: appstring2file
+; Doc:
+;_____________________________________________________________________________
+undef("appstring2file")
+procedure appstring2file(filename:string, str:string)
+begin
+  system("echo " + "'" + str + "'" + " >> " + filename)
+  return
+end
+
+;_____________________________________________________________________________
 ; procedure: put_record_header
 ;_____________________________________________________________________________
 undef("put_record_header")
 ;procedure put_record_header(a:file,t:integer,y:integer)
-procedure put_record_header(tstep:integer,varno:integer)
+procedure put_record_header(filename:string, tstep:integer,varno:integer)
 begin
-  print("")
-  print(qs("tstep") + " " + tstep + " " + qs("item") + " " \
+  appstring2file(filename, "")
+  appstring2file(filename, qs("tstep") + " " + tstep + " " + qs("item") + " " \
         + varno + " " + qs("layer") + " 0"); layer=0, because our data is always 2d
   return
 end
 
 begin
   input_filename = "aug-2011.nc"
-  output_filename = "aug-2011-mike.txt"
+  o = "aug-2011-mike.txt"
   dt = "06"
 
   a = addfile(input_filename,"r")
   ; o = addfile(output_filename,"w")
+  system("rm -f " + o )
+  system("touch " + o )
 
   ; retrieve data
   longs = a->longitude
@@ -77,41 +90,45 @@ begin
   sp = " "
 
   ; print header
-  print(qs("Title") + sp + qs("MM5 Wind"))
-  print(qs("Dim") + " 2")
-  print(qs("Geo") + sp + qs("LONG/LAT") + sp + long_min\
+  appstring2file(o, qs("Title") + sp + qs("MM5 Wind"))
+  appstring2file(o, qs("Dim") + " 2")
+  appstring2file(o, qs("Geo") + sp + qs("LONG/LAT") + sp + long_min\
         + sp + lat_min + " 0")
-  print(qs("Time") + sp + qs("EqudistantTimeAxis") + sp \
+  appstring2file(o, qs("Time") + sp + qs("EqudistantTimeAxis") + sp \
         + qs(t(0,0) + "-" + t(0,1) + "-" + t(0,2)) + sp \
         + qs(t(0,3) + ":" + t(0,4) + ":" + t(0,5)) + sp + dt + sp + "3600")
-  print(qs("NoGridPoints") + sp + noflongs + sp + noflats)
-  print(qs("Spacing") + sp + dy + sp + dx)
-  print(qs("NoStaticItems") + " 0")
-  print(qs("NoDynamicItems") + " 3")
-  print(qs("Item") + sp + qs("U-comp") + sp + qs("U-velocity component") \
+  appstring2file(o, qs("NoGridPoints") + sp + noflongs + sp + noflats)
+  appstring2file(o, qs("Spacing") + sp + dy + sp + dx)
+  appstring2file(o, qs("NoStaticItems") + " 0")
+  appstring2file(o, qs("NoDynamicItems") + " 3")
+  appstring2file(o, qs("Item") + sp + qs("U-comp") + sp + qs("U-velocity component") \
         + sp + qs("m/s"))
-  print(qs("Item") + sp + qs("V-comp") + sp + qs("V-velocity component") \
+  appstring2file(o, qs("Item") + sp + qs("V-comp") + sp + qs("V-velocity component") \
         + sp + qs("m/s"))
-  print(qs("Item") + sp + qs("SLP") + sp + qs("Surface Level Pressure") \
+  appstring2file(o, qs("Item") + sp + qs("SLP") + sp + qs("Surface Level Pressure") \
         + sp + qs("Pa"))
-  print("NoCustomBlocks" + " 1")
-  print(qs("M21_Misc") + " 1 7 0 -1E-030 -900 10 -1E-030 -1E-030 -1E-030")
-  print(qs("Delete") + " -1E-030")
-  print(qs("DataType") + " 0")
+  appstring2file(o, "NoCustomBlocks" + " 1")
+  appstring2file(o, qs("M21_Misc") + " 1 7 0 -1E-030 -900 10 -1E-030 -1E-030 -1E-030")
+  appstring2file(o, qs("Delete") + " -1E-030")
+  appstring2file(o, qs("DataType") + " 0")
 
+  option = True
+  option@fout = o
 
 ;  do it = 0, dimsizes(time) - 1, 1
+;  format(281(f9.3,1x))   ! take No. longitude
+
   do it = 0, 1, 1
     do var = 1, 3, 1
-      put_record_header(it, var)
+      put_record_header(o, it, var)
       if ( var .eq. 1 ) then
-        print(uu(it,:,:))
+        write_matrix(uu(it,:,:), noflongs + "f11.2", option)
       end if
       if ( var .eq. 2 ) then
-        print(vv(it,:,:))
+        write_matrix(vv(it,:,:), noflongs + "f11.2", option)
       end if
       if ( var .eq. 3 ) then
-        print(pp(it,:,:))
+        write_matrix(pp(it,:,:), noflongs + "f11.2", option)
       end if
     end do
   end do
