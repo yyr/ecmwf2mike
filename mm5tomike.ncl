@@ -113,24 +113,25 @@ begin
   appstring2file(o, qs("DataType") + " 0")
 
   option = True
-  option@fout = o
+  option@fout = "tmp"
 
-;  do it = 0, dimsizes(time) - 1, 1
-;  format(281(f9.3,1x))   ! take No. longitude
-
-  do it = 0, 1, 1
+;  do it = 0, 1, 1
+  do it = 0, dimsizes(time) - 1, 1
     do var = 1, 3, 1
       put_record_header(o, it, var)
       if ( var .eq. 1 ) then
         write_matrix(uu(it,:,:), noflongs + "f11.2", option)
+        system("cat " + option@fout + " >>" + o)
       end if
       if ( var .eq. 2 ) then
         write_matrix(vv(it,:,:), noflongs + "f11.2", option)
+        system("cat " +  option@fout + " >>" + o)
       end if
       if ( var .eq. 3 ) then
         write_matrix(pp(it,:,:), noflongs + "f11.2", option)
+        system("cat " +  option@fout + " >>" + o)
       end if
     end do
   end do
-
+  system("rm -f " + option@fout)
 end
