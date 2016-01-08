@@ -49,7 +49,8 @@ begin
   lats = a->latitude
 
   time = a->time
-  t = ut_calendar(time,0) ; time(time)
+  tt = ut_calendar(time,0) ; time(time)
+  t = floattoint(tt)
 
   u             = a->u10
   u_offset      = u@add_offset
@@ -95,8 +96,9 @@ begin
   appstring2file(o, qs("Geo") + sp + qs("LONG/LAT") + sp + long_min\
         + sp + lat_min + " 0")
   appstring2file(o, qs("Time") + sp + qs("EqudistantTimeAxis") + sp \
-        + qs(t(0,0) + "-" + t(0,1) + "-" + t(0,2)) + sp \
-        + qs(t(0,3) + ":" + t(0,4) + ":" + t(0,5)) + sp + dt + sp + "3600")
+        + qs(t(0,0) + "-" + sprinti("%0.2i",t(0,1)) + "-" + sprinti("%0.2i",t(0,2))) + sp \
+        + qs(sprinti("%0.2i",t(0,3)) + ":" + sprinti("%0.2i",t(0,4)) + ":"  \
+        + sprinti("%0.2i",t(0,5))) + sp + noftimes + sp + "3600")
   appstring2file(o, qs("NoGridPoints") + sp + noflongs + sp + noflats)
   appstring2file(o, qs("Spacing") + sp + dy + sp + dx)
   appstring2file(o, qs("NoStaticItems") + " 0")
