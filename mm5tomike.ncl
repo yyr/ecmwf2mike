@@ -70,7 +70,8 @@ begin
 
 
   noflongs = dimsizes(longs)
-  noflats = dimsizes(lats)
+  noflats  = dimsizes(lats)
+  noftimes = dimsizes(time)
 
   lat_min = lats(noflats - 1 )
   lat_max = lats(0)
@@ -114,11 +115,15 @@ begin
   appstring2file(o, qs("Delete") + " -1E-030")
   appstring2file(o, qs("DataType") + " 0")
 
+  ; write data to output file
   option = True
   option@fout = "tmp"
 
+  ; write_matrix can't append data to outfile, so we are using system's "cat"
+  ; command to write data to output file. (ugly and slow but works)
+
 ;  do it = 0, 1, 1
-  do it = 0, dimsizes(time) - 1, 1
+  do it = 0, noftimes - 1, 1
     do var = 1, 3, 1
       put_record_header(o, it, var)
       if ( var .eq. 1 ) then
