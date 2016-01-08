@@ -35,12 +35,17 @@ begin
 end
 
 begin
-  input_filename = "aug-2011.nc"
-  o = "aug-2011-mike.txt"
-  dt = "06"
 
+;______________USER CHANGES STARTS HERE ________________________________
+
+  input_filename  = "aug-2011.nc"
+  output_filename = "aug-2011-mike.txt"
+  dt = "06"                     ; this should be computed, but for the time being
+;______________USER CHANGES ENDS HERE___________________________________
+
+
+  o = output_filename
   a = addfile(input_filename,"r")
-  ; o = addfile(output_filename,"w")
   system("rm -f " + o )
   system("touch " + o )
 
