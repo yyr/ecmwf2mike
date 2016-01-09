@@ -40,7 +40,7 @@ begin
 
   input_filename  = "aug-2011.nc"
   output_filename = "aug-2011-mike.txt"
-  dt = "06"                     ; this should be computed, but for the time being
+  dt = 6                     ; (in hours) should be computed automatically, but for time being
 ;______________USER CHANGES ENDS HERE___________________________________
 
 
@@ -94,6 +94,7 @@ begin
   system("rm -f " + o )
   system("touch " + o )
 
+  dt = dt * 60 * 60             ; in seconds
   ; print header
   appstring2file(o, qs("Title") + sp + qs("MM5 Wind"))
   appstring2file(o, qs("Dim") + " 2")
@@ -102,7 +103,7 @@ begin
   appstring2file(o, qs("Time") + sp + qs("EqudistantTimeAxis") + sp \
                  + qs(t(0,0) + "-" + sprinti("%0.2i",t(0,1)) + "-" + sprinti("%0.2i",t(0,2))) + sp \
                  + qs(sprinti("%0.2i",t(0,3)) + ":" + sprinti("%0.2i",t(0,4)) + ":"  \
-                 + sprinti("%0.2i",t(0,5))) + sp + ntime + sp + "3600")
+                 + sprinti("%0.2i",t(0,5))) + sp + ntime + sp + " " + dt)
   appstring2file(o, qs("NoGridPoints") + sp + nlon + sp + nlat)
   appstring2file(o, qs("Spacing") + sp + dy + sp + dx)
   appstring2file(o, qs("NoStaticItems") + " 0")
