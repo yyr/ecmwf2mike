@@ -46,12 +46,10 @@ begin
 
   o = output_filename
   a = addfile(input_filename,"r")
-  system("rm -f " + o )
-  system("touch " + o )
 
   ; retrieve data
-  longs = a->longitude
-  lats = a->latitude
+  lon = a->longitude
+  lat = a->latitude
 
   time = a->time
   tt = ut_calendar(time,0) ; time(time)
@@ -87,14 +85,12 @@ begin
   dx = (long_max - long_min) / (noflongs - 1)
   dy = (lat_max - lat_min) / (noflats - 1)
 
-  ; print( lat_max + " "  + lat_min)
-  ; print( long_max + " "  + long_min)
-  ; print ("dx " + dx + " dy " + dy)
-
-
   ; start writing out file
   dq = str_get_dq()
   sp = " "
+
+  system("rm -f " + o )
+  system("touch " + o )
 
   ; print header
   appstring2file(o, qs("Title") + sp + qs("MM5 Wind"))
