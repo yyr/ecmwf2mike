@@ -59,19 +59,21 @@ begin
   u_offset      = u@add_offset
   u_scalefactor = u@scale_factor
   uu = (u * u_scalefactor) + u_offset
+  copy_VarAtts(u,uu)
 
   v             = a->v10
   v_offset      = v@add_offset
   v_scalefactor = v@scale_factor
   vv = (v * v_scalefactor) + v_offset
-
+  copy_VarAtts(v,vv)
 
   p             = a->sp
   p_offset      = p@add_offset
   p_scalefactor = p@scale_factor
   pp = (p * p_scalefactor) + p_offset
   pp = pp / 100. ; convert to hPa.
-
+  copy_VarAtts(p,pp)
+  pp@units = "hPa"
 
   ; calculate dimensions
   nlon = dimsizes(lon)
