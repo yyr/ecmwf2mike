@@ -70,6 +70,7 @@ begin
   p_offset      = p@add_offset
   p_scalefactor = p@scale_factor
   pp = (p * p_scalefactor) + p_offset
+  pp = pp / 100. ; convert to hPa.
 
 
   ; calculate dimensions
