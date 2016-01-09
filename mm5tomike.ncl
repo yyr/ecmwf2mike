@@ -30,7 +30,7 @@ procedure put_record_header(filename:string, tstep:integer,varno:integer)
 begin
   appstring2file(filename, "")
   appstring2file(filename, qs("tstep") + " " + tstep + " " + qs("item") + " " \
-        + varno + " " + qs("layer") + " 0"); layer=0, because our data is always 2d
+                 + varno + " " + qs("layer") + " 0"); layer=0, because our data is always 2d
   return
 end
 
@@ -72,18 +72,19 @@ begin
   pp = (p * p_scalefactor) + p_offset
 
 
-  noflongs = dimsizes(longs)
-  noflats  = dimsizes(lats)
-  noftimes = dimsizes(time)
+  ; calculate dimensions
+  nlon = dimsizes(lon)
+  nlat  = dimsizes(lat)
+  ntime = dimsizes(time)
 
-  lat_min = lats(noflats - 1 )
-  lat_max = lats(0)
+  lat_min = lat(nlat - 1 )
+  lat_max = lat(0)
 
-  long_max   = longs(noflongs - 1 )
-  long_min = longs(0)
+  long_max   = lon(nlon - 1 )
+  long_min = lon(0)
 
-  dx = (long_max - long_min) / (noflongs - 1)
-  dy = (lat_max - lat_min) / (noflats - 1)
+  dx = (long_max - long_min) / (nlon - 1)
+  dy = (lat_max - lat_min) / (nlat - 1)
 
   ; start writing out file
   dq = str_get_dq()
@@ -96,21 +97,21 @@ begin
   appstring2file(o, qs("Title") + sp + qs("MM5 Wind"))
   appstring2file(o, qs("Dim") + " 2")
   appstring2file(o, qs("Geo") + sp + qs("LONG/LAT") + sp + long_min\
-        + sp + lat_min + " 0")
+                 + sp + lat_min + " 0")
   appstring2file(o, qs("Time") + sp + qs("EqudistantTimeAxis") + sp \
-        + qs(t(0,0) + "-" + sprinti("%0.2i",t(0,1)) + "-" + sprinti("%0.2i",t(0,2))) + sp \
-        + qs(sprinti("%0.2i",t(0,3)) + ":" + sprinti("%0.2i",t(0,4)) + ":"  \
-        + sprinti("%0.2i",t(0,5))) + sp + noftimes + sp + "3600")
-  appstring2file(o, qs("NoGridPoints") + sp + noflongs + sp + noflats)
+                 + qs(t(0,0) + "-" + sprinti("%0.2i",t(0,1)) + "-" + sprinti("%0.2i",t(0,2))) + sp \
+                 + qs(sprinti("%0.2i",t(0,3)) + ":" + sprinti("%0.2i",t(0,4)) + ":"  \
+                 + sprinti("%0.2i",t(0,5))) + sp + ntime + sp + "3600")
+  appstring2file(o, qs("NoGridPoints") + sp + nlon + sp + nlat)
   appstring2file(o, qs("Spacing") + sp + dy + sp + dx)
   appstring2file(o, qs("NoStaticItems") + " 0")
   appstring2file(o, qs("NoDynamicItems") + " 3")
   appstring2file(o, qs("Item") + sp + qs("U-comp") + sp + qs("U-velocity component") \
-        + sp + qs("m/s"))
+                 + sp + qs("m/s"))
   appstring2file(o, qs("Item") + sp + qs("V-comp") + sp + qs("V-velocity component") \
-        + sp + qs("m/s"))
+                 + sp + qs("m/s"))
   appstring2file(o, qs("Item") + sp + qs("SLP") + sp + qs("Surface Level Pressure") \
-        + sp + qs("Pa"))
+                 + sp + qs("Pa"))
   appstring2file(o, "NoCustomBlocks" + " 1")
   appstring2file(o, qs("M21_Misc") + " 1 7 0 -1E-030 -900 10 -1E-030 -1E-030 -1E-030")
   appstring2file(o, qs("Delete") + " -1E-030")
@@ -124,19 +125,19 @@ begin
   ; command to write data to output file. (ugly and slow but works)
 
 ;  do it = 0, 1, 1
-  do it = 0, noftimes - 1, 1
+  do it = 0, ntime - 1, 1
     do var = 1, 3, 1
       put_record_header(o, it, var)
       if ( var .eq. 1 ) then
-        write_matrix(uu(it,:,:), noflongs + "f11.2", option)
+        write_matrix(uu(it,:,:), nlon + "f11.2", option)
         system("cat " + option@fout + " >>" + o)
       end if
       if ( var .eq. 2 ) then
-        write_matrix(vv(it,:,:), noflongs + "f11.2", option)
+        write_matrix(vv(it,:,:), nlon + "f11.2", option)
         system("cat " +  option@fout + " >>" + o)
       end if
       if ( var .eq. 3 ) then
-        write_matrix(pp(it,:,:), noflongs + "f11.2", option)
+        write_matrix(pp(it,:,:), nlon + "f11.2", option)
         system("cat " +  option@fout + " >>" + o)
       end if
     end do
