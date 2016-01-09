@@ -111,8 +111,8 @@ begin
                  + sp + qs("m/s"))
   appstring2file(o, qs("Item") + sp + qs("V-comp") + sp + qs("V-velocity component") \
                  + sp + qs("m/s"))
-  appstring2file(o, qs("Item") + sp + qs("SLP") + sp + qs("Surface Level Pressure") \
-                 + sp + qs("Pa"))
+  appstring2file(o, qs("Item") + sp + qs("SAP") + sp + qs("Surface Air Pressure") \
+                 + sp + qs("hPa"))
   appstring2file(o, "NoCustomBlocks" + " 1")
   appstring2file(o, qs("M21_Misc") + " 1 7 0 -1E-030 -900 10 -1E-030 -1E-030 -1E-030")
   appstring2file(o, qs("Delete") + " -1E-030")
